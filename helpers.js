@@ -1,14 +1,30 @@
 import { ObjectId } from "mongodb";
 
+
 const exportedMethods = {
+  // checkId(id) {
+  //   if (!id) throw `Error: You must provide a input`;
+  //   if (typeof id !== "string") throw `Error: input must be a string`;
+  //   id = id.trim();
+  //   if (id.length === 0)
+  //     throw `Error: input cannot be an empty string or just spaces`;
+  //   if (!ObjectId.isValid(id)) throw `Error: input invalid object ID`;
+  //   return id;
+  // },
+
+  // nastaran:
   checkId(id) {
-    if (!id) throw `Error: You must provide a input`;
+    if (!id) throw `Error: You must provide an input`;
+    
+    if (typeof id === "object" && id._bsontype === "ObjectId") {
+      return id; // Already an ObjectId — return as-is
+    }
     if (typeof id !== "string") throw `Error: input must be a string`;
     id = id.trim();
-    if (id.length === 0)
-      throw `Error: input cannot be an empty string or just spaces`;
+    if (id.length === 0) throw `Error: input cannot be an empty string or just spaces`;
     if (!ObjectId.isValid(id)) throw `Error: input invalid object ID`;
-    return id;
+
+    return new ObjectId(id); // ✅ convert string to ObjectId
   },
   checkFirstName(firstName) {
     if (
@@ -146,7 +162,7 @@ const exportedMethods = {
   },
   checkNumber(input) {
     if (!input) throw `Error: You must supply an input`;
-    if (typeof input !== "string") throw `Error: Input should be a string.`;
+    if (typeof input !== "string") throw `Error: Input number "${input}" should be a string.`;
     input = input.trim();
     if (input.length === 0) {
       throw `Error: Given date cannot be an empty string or string with just spaces.`;

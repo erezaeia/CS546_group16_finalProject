@@ -52,6 +52,7 @@ app.use(logger);
 app.use('/login', loginRedirect);
 app.use('/register', registerRedirect);
 app.use('/home',protectHomePage);
+app.use('/yearlySummary',protectHomePage);
 app.use('/signout', protectSignoutPage);
 
 configRoutes(app);

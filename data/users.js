@@ -1,4 +1,5 @@
-import {users} from '../config/mongoCollections.js';
+import {users} from '../config/mongoCollections.js'
+;
 import {ObjectId} from 'mongodb';
 import validation from '../helpers.js';
 import bcrypt from 'bcryptjs';
