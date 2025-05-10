@@ -12,7 +12,7 @@ const exportedMethods = {
   },
 
   checkUserId(id) {
-    console.log("🔍 checkId() called with:", id, "type:", typeof id);
+    //console.log("🔍 checkId() called with:", id, "type:", typeof id);
     if (typeof id !== "string" || id.trim() === "") {
       throw "Input should be a string HERE.";
     }
