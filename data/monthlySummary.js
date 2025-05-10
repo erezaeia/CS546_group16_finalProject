@@ -318,7 +318,39 @@ const monthlySummaryFunctions = {
       breakdownByCategory,
       remainingBalance
     };
-  }
+  },
+  async getDailyExpenses(userId, month, year) {
+    userId = exportedMethods.checkId(userId);
+    month = exportedMethods.checkNumber(month);
+    year = exportedMethods.checkNumber(year);
+  
+    const paddedMonth = month.toString().padStart(2, '0');
+    const pattern = `^${paddedMonth}/\\d{2}/${year}`;
+    const datePattern = new RegExp(pattern);
+  
+    const transactionCollection = await transactions();
+    const txnList = await transactionCollection.find({
+      userId,
+      date: { $regex: datePattern }
+    }).toArray();
+  
+    const dailyTotals = {};
+  
+    for (const txn of txnList) {
+      const date = txn.date.split('/')[1]; // Get the 'dd' part of 'MM/dd/yyyy'
+      const amount = Number(txn.amount) || 0;
+      dailyTotals[date] = (dailyTotals[date] || 0) + amount;
+    }
+  
+    // Convert to array of objects sorted by day
+    const result = Object.entries(dailyTotals)
+      .map(([day, total]) => ({
+        day: parseInt(day), total
+      }))
+      .sort((a, b) => a.day - b.day);
+  
+    return result;
+  }  
 };
 
 export default monthlySummaryFunctions;

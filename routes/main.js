@@ -258,6 +258,7 @@ router.get('/home', async (req, res) => {
         noData: true
       });
     }
+    const dailyExpenses = await monthlySummaryFunctions.getDailyExpenses(user.id, paddedMonth, numericYear);
 
     res.render('home', {
       title: 'Monthly Summary',
@@ -286,6 +287,7 @@ router.get('/home', async (req, res) => {
       totalVariableExpenses: monthlySummary.totalVariableExpenses || 0,
       remainingBalance: monthlySummary.remainingBalance || 0,
       breakdownByCategory: monthlySummary.breakdownByCategory || [],
+      dailyExpenses,
       json: JSON.stringify
     });
   } catch (error) {
