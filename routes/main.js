@@ -8,6 +8,7 @@ import { ObjectId } from "mongodb";
 import incomeFunctions from "../data/income.js";
 import { income } from "../config/mongoCollections.js";
 import transactionFunctions from "../data/transactions.js";
+import monthlySummaryFunctions from '../data/monthlySummary.js';
 
 
 //---------------------------- Landing Routes ----------------------------//
@@ -283,46 +284,6 @@ router.route("/signout").get(async (req, res) => {
     general_page: false,
     include_navbar: false,
     include_summary_navbar: false,
-    partial: false,
-    include_footer: false,
-  });
-});
-
-//---------------------------- Home Routes ----------------------------//
-router.route("/home").get(async (req, res) => {
-  if (!req.session.user) return res.redirect("/login");
-
-  const user = req.session.user;
-
-  const now = new Date();
-  const currentTime = now.toLocaleTimeString([], {
-    hour: "2-digit",
-    minute: "2-digit",
-    hour12: true,
-  });
-  const currentDate = now.toLocaleDateString("en-US");
-
-  return res.render("home", {
-    title: "Monthly Summary",
-    home_or_summary: true,
-    landing_signup_login: false,
-    general_page: false,
-    include_navbar: true,
-    include_summary_navbar: true,
-    id: user.id,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    gender: user.gender,
-    city: user.city,
-    state: user.state,
-    age: user.age,
-    balance: user.balance,
-    categories: user.categories,
-    fixedExpenses: user.fixedExpenses,
-    currentDate,
-    currentTime,
-    settings_page: false,
     partial: false,
     include_footer: false,
   });
@@ -1021,6 +982,85 @@ router.delete("/settings/deleteCategory", async (req, res) => {
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: "Could not delete category" });
+  }
+});
+
+//---------------------------- Home Routes ----------------------------//
+
+router.get('/home', async (req, res) => {
+  console.log("✅ In home page");
+  try {
+    console.log("✅ In try");
+    if (!req.session.user) return res.redirect('/login');
+    console.log("✅ after session user check");
+
+    const user = req.session.user;
+    const now = new Date();
+    const numericMonth = now.getMonth() + 1;
+    const numericYear = now.getFullYear().toString();;
+    const paddedMonth = numericMonth.toString().padStart(2, '0');
+    const currentDate = now.toLocaleDateString('en-US');
+    const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+    console.log("🟩 🟩 🟩 🟩 🟩  recalculating monthly summary");
+    await monthlySummaryFunctions.recalculateMonthlySummary(user.id, paddedMonth, numericYear);
+    const monthlySummary = await monthlySummaryFunctions.getMonthlySummary(user.id, paddedMonth, numericYear);
+    console.log("🟩 🟩 🟩 🟩 🟩 monthly summary: ", monthlySummary );
+
+    if (!monthlySummary) {
+      return res.render('home', {
+        title: 'Monthly Summary',
+        home_or_summary: true,
+        landing_signup_login: false,
+        general_page: false,
+        include_navbar: true,
+        include_summary_navbar: true,
+        currentDate,
+        currentTime,
+        month: monthNames[numericMonth - 1],
+        year: numericYear,
+        noData: true
+      });
+    }
+    const dailyExpenses = await monthlySummaryFunctions.getDailyExpenses(user.id, paddedMonth, numericYear);
+
+    res.render('home', {
+      title: 'Monthly Summary',
+      home_or_summary: true,
+      landing_signup_login: false,
+      general_page: false,
+      include_navbar: true,
+      include_summary_navbar: true,
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      gender: user.gender,
+      city: user.city,
+      state: user.state,
+      age: user.age,
+      balance: user.balance,
+      categories: user.categories,
+      fixedExpenses: user.fixedExpenses,
+      currentDate,
+      currentTime,
+      month: monthNames[numericMonth - 1],
+      year: numericYear,
+      totalIncome: monthlySummary.totalIncome || 0,
+      totalFixedExpenses: monthlySummary.totalFixedExpenses || 0,
+      totalVariableExpenses: monthlySummary.totalVariableExpenses || 0,
+      remainingBalance: monthlySummary.remainingBalance || 0,
+      breakdownByCategory: monthlySummary.breakdownByCategory || [],
+      dailyExpenses,
+      json: JSON.stringify
+    });
+  } catch (error) {
+    console.error("Error in /home route:", error);
+    return res.status(500).render('error', { error: error.toString() });
   }
 });
 export default router;
