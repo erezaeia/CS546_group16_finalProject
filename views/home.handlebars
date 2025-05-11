@@ -1,3 +1,22 @@
+<form method="GET" action="/home" class="month-year-form">
+  <select name="month">
+    {{#each monthOptions}}
+      <option value="{{value}}" {{#if selected}}selected{{/if}}>{{name}}</option>
+    {{/each}}
+  </select>
+
+  <select name="year">
+    {{#each yearOptions}}
+      <option value="{{value}}" {{#if selected}}selected{{/if}}>{{value}}</option>
+    {{/each}}
+  </select>
+
+  <button type="submit">View</button>
+</form>
+
+
+
+
 {{#if noData}}
   <div class="no-summary-message" style="margin-top: 2rem; text-align: center;">
     <h2>Start tracking your finances</h2>

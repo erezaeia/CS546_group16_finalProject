@@ -987,80 +987,232 @@ router.delete("/settings/deleteCategory", async (req, res) => {
 
 //---------------------------- Home Routes ----------------------------//
 
-router.get('/home', async (req, res) => {
-  console.log("✅ In home page");
-  try {
-    console.log("✅ In try");
-    if (!req.session.user) return res.redirect('/login');
-    console.log("✅ after session user check");
+// router.get('/home', async (req, res) => {
+//   console.log("✅ In home page");
+//   try {
+//     console.log("✅ In try");
+//     if (!req.session.user) return res.redirect('/login');
+//     console.log("✅ after session user check");
 
+//     const user = req.session.user;
+//     const now = new Date();
+//     const numericMonth = now.getMonth() + 1;
+//     const numericYear = now.getFullYear().toString();;
+//     const paddedMonth = numericMonth.toString().padStart(2, '0');
+//     const currentDate = now.toLocaleDateString('en-US');
+//     const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+
+//     const monthNames = [
+//       "January", "February", "March", "April", "May", "June",
+//       "July", "August", "September", "October", "November", "December"
+//     ];
+//     console.log("🟩 🟩 🟩 🟩 🟩  recalculating monthly summary");
+//     await monthlySummaryFunctions.recalculateMonthlySummary(user.id, paddedMonth, numericYear);
+//     const monthlySummary = await monthlySummaryFunctions.getMonthlySummary(user.id, paddedMonth, numericYear);
+//     console.log("🟩 🟩 🟩 🟩 🟩 monthly summary: ", monthlySummary );
+
+//     if (!monthlySummary) {
+//       return res.render('home', {
+//         title: 'Monthly Summary',
+//         home_or_summary: true,
+//         landing_signup_login: false,
+//         general_page: false,
+//         include_navbar: true,
+//         include_summary_navbar: true,
+//         currentDate,
+//         currentTime,
+//         month: monthNames[numericMonth - 1],
+//         year: numericYear,
+//         noData: true
+//       });
+//     }
+//     const dailyExpenses = await monthlySummaryFunctions.getDailyExpenses(user.id, paddedMonth, numericYear);
+
+//     res.render('home', {
+//       title: 'Monthly Summary',
+//       home_or_summary: true,
+//       landing_signup_login: false,
+//       general_page: false,
+//       include_navbar: true,
+//       include_summary_navbar: true,
+//       id: user.id,
+//       firstName: user.firstName,
+//       lastName: user.lastName,
+//       email: user.email,
+//       gender: user.gender,
+//       city: user.city,
+//       state: user.state,
+//       age: user.age,
+//       balance: user.balance,
+//       categories: user.categories,
+//       fixedExpenses: user.fixedExpenses,
+//       currentDate,
+//       currentTime,
+//       month: monthNames[numericMonth - 1],
+//       year: numericYear,
+//       totalIncome: monthlySummary.totalIncome || 0,
+//       totalFixedExpenses: monthlySummary.totalFixedExpenses || 0,
+//       totalVariableExpenses: monthlySummary.totalVariableExpenses || 0,
+//       remainingBalance: monthlySummary.remainingBalance || 0,
+//       breakdownByCategory: monthlySummary.breakdownByCategory || [],
+//       dailyExpenses,
+//       json: JSON.stringify
+//     });
+//   } catch (error) {
+//     console.error("Error in /home route:", error);
+//     return res.status(500).render('error', { error: error.toString() });
+//   }
+// });
+// router.get('/home', async (req, res) => {
+//   try {
+//     if (!req.session.user) return res.redirect('/login');
+//     const user = req.session.user;
+
+//     // Default to current month/year
+//     const now = new Date();
+//     let numericMonth = now.getMonth() + 1;
+//     let numericYear = now.getFullYear();
+
+//     if (req.query.renderMonth) {
+//       const parts = req.query.renderMonth.split('-');
+//       if (parts.length === 2) {
+//         numericYear = parseInt(parts[0]);
+//         numericMonth = parseInt(parts[1]);
+//       }
+//     }
+
+//     const paddedMonth = numericMonth.toString().padStart(2, '0');
+//     const monthNames = [
+//       "January", "February", "March", "April", "May", "June",
+//       "July", "August", "September", "October", "November", "December"
+//     ];
+//     const currentDate = now.toLocaleDateString('en-US');
+//     const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+
+//     await monthlySummaryFunctions.recalculateMonthlySummary(user.id, paddedMonth, numericYear.toString());
+//     const monthlySummary = await monthlySummaryFunctions.getMonthlySummary(user.id, paddedMonth, numericYear.toString());
+
+//     if (!monthlySummary) {
+//       return res.render('home', {
+//         title: 'Monthly Summary',
+//         home_or_summary: true,
+//         include_navbar: true,
+//         include_summary_navbar: true,
+//         currentDate,
+//         currentTime,
+//         month: monthNames[numericMonth - 1],
+//         year: numericYear,
+//         noData: true
+//       });
+//     }
+
+//     const dailyExpenses = await monthlySummaryFunctions.getDailyExpenses(user.id, paddedMonth, numericYear.toString());
+
+//     res.render('home', {
+//       title: 'Monthly Summary',
+//       home_or_summary: true,
+//       include_navbar: true,
+//       include_summary_navbar: true,
+//       ...user,
+//       currentDate,
+//       currentTime,
+//       month: monthNames[numericMonth - 1],
+//       year: numericYear,
+//       ...monthlySummary,
+//       dailyExpenses,
+//       json: JSON.stringify
+//     });
+//   } catch (e) {
+//     console.error("Error in /home route:", e);
+//     return res.status(500).render("error", { error: e.toString() });
+//   }
+// });
+router.get('/home', async (req, res) => {
+  try {
+    if (!req.session.user) return res.redirect('/login');
     const user = req.session.user;
+
     const now = new Date();
-    const numericMonth = now.getMonth() + 1;
-    const numericYear = now.getFullYear().toString();;
+    let numericMonth = now.getMonth() + 1;
+    let numericYear = now.getFullYear();
+
+    // Handle dropdown month/year params
+    if (req.query.month && req.query.year) {
+      const m = parseInt(req.query.month);
+      const y = parseInt(req.query.year);
+      if (!isNaN(m) && m >= 1 && m <= 12 && !isNaN(y) && y >= 2020 && y <= now.getFullYear()) {
+        numericMonth = m;
+        numericYear = y;
+      }
+    }
+
     const paddedMonth = numericMonth.toString().padStart(2, '0');
     const currentDate = now.toLocaleDateString('en-US');
     const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
 
+    // Build dropdown options
     const monthNames = [
       "January", "February", "March", "April", "May", "June",
       "July", "August", "September", "October", "November", "December"
     ];
-    console.log("🟩 🟩 🟩 🟩 🟩  recalculating monthly summary");
-    await monthlySummaryFunctions.recalculateMonthlySummary(user.id, paddedMonth, numericYear);
-    const monthlySummary = await monthlySummaryFunctions.getMonthlySummary(user.id, paddedMonth, numericYear);
-    console.log("🟩 🟩 🟩 🟩 🟩 monthly summary: ", monthlySummary );
+    const monthOptions = monthNames.map((name, index) => ({
+      name,
+      value: (index + 1).toString().padStart(2, '0'),
+      selected: index + 1 === numericMonth
+    }));
+
+    const yearOptions = [];
+    for (let y = now.getFullYear(); y >= 2020; y--) {
+      yearOptions.push({
+        value: y.toString(),
+        selected: y === numericYear
+      });
+    }
+
+    // Update summary data
+    await monthlySummaryFunctions.recalculateMonthlySummary(user.id, paddedMonth, numericYear.toString());
+    const monthlySummary = await monthlySummaryFunctions.getMonthlySummary(user.id, paddedMonth, numericYear.toString());
 
     if (!monthlySummary) {
       return res.render('home', {
         title: 'Monthly Summary',
         home_or_summary: true,
-        landing_signup_login: false,
-        general_page: false,
         include_navbar: true,
         include_summary_navbar: true,
         currentDate,
         currentTime,
         month: monthNames[numericMonth - 1],
         year: numericYear,
+        monthOptions,
+        yearOptions,
         noData: true
       });
     }
-    const dailyExpenses = await monthlySummaryFunctions.getDailyExpenses(user.id, paddedMonth, numericYear);
 
-    res.render('home', {
+    const dailyExpenses = await monthlySummaryFunctions.getDailyExpenses(user.id, paddedMonth, numericYear.toString());
+
+    return res.render('home', {
       title: 'Monthly Summary',
       home_or_summary: true,
-      landing_signup_login: false,
-      general_page: false,
       include_navbar: true,
       include_summary_navbar: true,
-      id: user.id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      gender: user.gender,
-      city: user.city,
-      state: user.state,
-      age: user.age,
-      balance: user.balance,
-      categories: user.categories,
-      fixedExpenses: user.fixedExpenses,
+      ...user,
       currentDate,
       currentTime,
       month: monthNames[numericMonth - 1],
       year: numericYear,
-      totalIncome: monthlySummary.totalIncome || 0,
-      totalFixedExpenses: monthlySummary.totalFixedExpenses || 0,
-      totalVariableExpenses: monthlySummary.totalVariableExpenses || 0,
-      remainingBalance: monthlySummary.remainingBalance || 0,
-      breakdownByCategory: monthlySummary.breakdownByCategory || [],
+      monthOptions,
+      yearOptions,
+      ...monthlySummary,
       dailyExpenses,
       json: JSON.stringify
     });
-  } catch (error) {
-    console.error("Error in /home route:", error);
-    return res.status(500).render('error', { error: error.toString() });
+  } catch (e) {
+    console.error("Error in /home route:", e);
+    return res.status(500).render("error", { error: e.toString() });
   }
 });
+
+
+
 export default router;
