@@ -1,18 +1,19 @@
 <form method="GET" action="/home" class="month-year-form">
-  <select name="month">
+  <select name="month" class="form-select">
     {{#each monthOptions}}
       <option value="{{value}}" {{#if selected}}selected{{/if}}>{{name}}</option>
     {{/each}}
   </select>
 
-  <select name="year">
+  <select name="year" class="form-select">
     {{#each yearOptions}}
       <option value="{{value}}" {{#if selected}}selected{{/if}}>{{value}}</option>
     {{/each}}
   </select>
 
-  <button type="submit">View</button>
+  <button type="submit" class="form-button">View</button>
 </form>
+
 
 
 
@@ -25,7 +26,8 @@
     <p>Go ahead and add your income and expenses to get started!</p>
   </div>
 {{else}}
-  <h1>Monthly Summary - {{month}} {{year}}</h1>
+  <h1>Monthly Summary - {{monthName}} {{year}}</h1>
+
   <div class="summary-bottom-section">
     <!-- Row 1: Category + Pie Chart -->
     <div class="chart-row-flex">

@@ -987,146 +987,6 @@ router.delete("/settings/deleteCategory", async (req, res) => {
 
 //---------------------------- Home Routes ----------------------------//
 
-// router.get('/home', async (req, res) => {
-//   console.log("✅ In home page");
-//   try {
-//     console.log("✅ In try");
-//     if (!req.session.user) return res.redirect('/login');
-//     console.log("✅ after session user check");
-
-//     const user = req.session.user;
-//     const now = new Date();
-//     const numericMonth = now.getMonth() + 1;
-//     const numericYear = now.getFullYear().toString();;
-//     const paddedMonth = numericMonth.toString().padStart(2, '0');
-//     const currentDate = now.toLocaleDateString('en-US');
-//     const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-
-//     const monthNames = [
-//       "January", "February", "March", "April", "May", "June",
-//       "July", "August", "September", "October", "November", "December"
-//     ];
-//     console.log("🟩 🟩 🟩 🟩 🟩  recalculating monthly summary");
-//     await monthlySummaryFunctions.recalculateMonthlySummary(user.id, paddedMonth, numericYear);
-//     const monthlySummary = await monthlySummaryFunctions.getMonthlySummary(user.id, paddedMonth, numericYear);
-//     console.log("🟩 🟩 🟩 🟩 🟩 monthly summary: ", monthlySummary );
-
-//     if (!monthlySummary) {
-//       return res.render('home', {
-//         title: 'Monthly Summary',
-//         home_or_summary: true,
-//         landing_signup_login: false,
-//         general_page: false,
-//         include_navbar: true,
-//         include_summary_navbar: true,
-//         currentDate,
-//         currentTime,
-//         month: monthNames[numericMonth - 1],
-//         year: numericYear,
-//         noData: true
-//       });
-//     }
-//     const dailyExpenses = await monthlySummaryFunctions.getDailyExpenses(user.id, paddedMonth, numericYear);
-
-//     res.render('home', {
-//       title: 'Monthly Summary',
-//       home_or_summary: true,
-//       landing_signup_login: false,
-//       general_page: false,
-//       include_navbar: true,
-//       include_summary_navbar: true,
-//       id: user.id,
-//       firstName: user.firstName,
-//       lastName: user.lastName,
-//       email: user.email,
-//       gender: user.gender,
-//       city: user.city,
-//       state: user.state,
-//       age: user.age,
-//       balance: user.balance,
-//       categories: user.categories,
-//       fixedExpenses: user.fixedExpenses,
-//       currentDate,
-//       currentTime,
-//       month: monthNames[numericMonth - 1],
-//       year: numericYear,
-//       totalIncome: monthlySummary.totalIncome || 0,
-//       totalFixedExpenses: monthlySummary.totalFixedExpenses || 0,
-//       totalVariableExpenses: monthlySummary.totalVariableExpenses || 0,
-//       remainingBalance: monthlySummary.remainingBalance || 0,
-//       breakdownByCategory: monthlySummary.breakdownByCategory || [],
-//       dailyExpenses,
-//       json: JSON.stringify
-//     });
-//   } catch (error) {
-//     console.error("Error in /home route:", error);
-//     return res.status(500).render('error', { error: error.toString() });
-//   }
-// });
-// router.get('/home', async (req, res) => {
-//   try {
-//     if (!req.session.user) return res.redirect('/login');
-//     const user = req.session.user;
-
-//     // Default to current month/year
-//     const now = new Date();
-//     let numericMonth = now.getMonth() + 1;
-//     let numericYear = now.getFullYear();
-
-//     if (req.query.renderMonth) {
-//       const parts = req.query.renderMonth.split('-');
-//       if (parts.length === 2) {
-//         numericYear = parseInt(parts[0]);
-//         numericMonth = parseInt(parts[1]);
-//       }
-//     }
-
-//     const paddedMonth = numericMonth.toString().padStart(2, '0');
-//     const monthNames = [
-//       "January", "February", "March", "April", "May", "June",
-//       "July", "August", "September", "October", "November", "December"
-//     ];
-//     const currentDate = now.toLocaleDateString('en-US');
-//     const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-
-//     await monthlySummaryFunctions.recalculateMonthlySummary(user.id, paddedMonth, numericYear.toString());
-//     const monthlySummary = await monthlySummaryFunctions.getMonthlySummary(user.id, paddedMonth, numericYear.toString());
-
-//     if (!monthlySummary) {
-//       return res.render('home', {
-//         title: 'Monthly Summary',
-//         home_or_summary: true,
-//         include_navbar: true,
-//         include_summary_navbar: true,
-//         currentDate,
-//         currentTime,
-//         month: monthNames[numericMonth - 1],
-//         year: numericYear,
-//         noData: true
-//       });
-//     }
-
-//     const dailyExpenses = await monthlySummaryFunctions.getDailyExpenses(user.id, paddedMonth, numericYear.toString());
-
-//     res.render('home', {
-//       title: 'Monthly Summary',
-//       home_or_summary: true,
-//       include_navbar: true,
-//       include_summary_navbar: true,
-//       ...user,
-//       currentDate,
-//       currentTime,
-//       month: monthNames[numericMonth - 1],
-//       year: numericYear,
-//       ...monthlySummary,
-//       dailyExpenses,
-//       json: JSON.stringify
-//     });
-//   } catch (e) {
-//     console.error("Error in /home route:", e);
-//     return res.status(500).render("error", { error: e.toString() });
-//   }
-// });
 router.get('/home', async (req, res) => {
   try {
     if (!req.session.user) return res.redirect('/login');
@@ -1136,7 +996,7 @@ router.get('/home', async (req, res) => {
     let numericMonth = now.getMonth() + 1;
     let numericYear = now.getFullYear();
 
-    // Handle dropdown month/year params
+    // If user selected a specific month/year from dropdown
     if (req.query.month && req.query.year) {
       const m = parseInt(req.query.month);
       const y = parseInt(req.query.year);
@@ -1147,20 +1007,28 @@ router.get('/home', async (req, res) => {
     }
 
     const paddedMonth = numericMonth.toString().padStart(2, '0');
-    const currentDate = now.toLocaleDateString('en-US');
-    const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
-
-    // Build dropdown options
     const monthNames = [
       "January", "February", "March", "April", "May", "June",
       "July", "August", "September", "October", "November", "December"
     ];
+    const monthMap = {
+      "01": "January", "02": "February", "03": "March", "04": "April",
+      "05": "May", "06": "June", "07": "July", "08": "August",
+      "09": "September", "10": "October", "11": "November", "12": "December"
+    };
+    const selectedMonth = req.query.month;
+
+    const currentDate = now.toLocaleDateString('en-US');
+    const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
+
+    // Dropdown month options
     const monthOptions = monthNames.map((name, index) => ({
       name,
       value: (index + 1).toString().padStart(2, '0'),
       selected: index + 1 === numericMonth
     }));
 
+    // Dropdown year options
     const yearOptions = [];
     for (let y = now.getFullYear(); y >= 2020; y--) {
       yearOptions.push({
@@ -1169,7 +1037,7 @@ router.get('/home', async (req, res) => {
       });
     }
 
-    // Update summary data
+    // Update and fetch monthly summary
     await monthlySummaryFunctions.recalculateMonthlySummary(user.id, paddedMonth, numericYear.toString());
     const monthlySummary = await monthlySummaryFunctions.getMonthlySummary(user.id, paddedMonth, numericYear.toString());
 
@@ -1181,8 +1049,9 @@ router.get('/home', async (req, res) => {
         include_summary_navbar: true,
         currentDate,
         currentTime,
-        month: monthNames[numericMonth - 1],
+        month: monthNames[numericMonth - 1], // readable month name
         year: numericYear,
+        monthName: monthMap[selectedMonth] || selectedMonth,
         monthOptions,
         yearOptions,
         noData: true
@@ -1203,6 +1072,7 @@ router.get('/home', async (req, res) => {
       year: numericYear,
       monthOptions,
       yearOptions,
+      monthName: monthMap[selectedMonth] || selectedMonth,
       ...monthlySummary,
       dailyExpenses,
       json: JSON.stringify
@@ -1212,6 +1082,7 @@ router.get('/home', async (req, res) => {
     return res.status(500).render("error", { error: e.toString() });
   }
 });
+
 
 
 

@@ -93,6 +93,7 @@ a {
 }
 
 .category-breakdown li {
+  font-family: 'Times New Roman', Times, serif;
   font-size: 0.95rem;
   padding: 0.4rem 0.8rem;
   margin: 0.25rem 0;
@@ -168,6 +169,7 @@ a {
 }
 
 .overview-section {
+  font-family: 'Times New Roman', Times, serif;
   background-color: #e6f2ff;
   padding: 1rem;
   border-radius: 12px;
@@ -204,6 +206,7 @@ h1 {
 }
 
 .overview-list li {
+  font-family: 'Times New Roman', Times, serif;
   font-size: 0.95rem;
   padding: 0.4rem 0.8rem;
   margin: 0.25rem 0;
@@ -213,6 +216,49 @@ h1 {
   display: flex;
   justify-content: space-between;
 }
+
+
+
+.month-year-form {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.form-select {
+  font-family: 'Times New Roman', Times, serif;
+  padding: 0.4rem 0.8rem;
+  border-radius: 10px;
+  border: 1px solid #d8b4c6;
+  background-color: #fbe9f1;
+  font-size: 1rem;
+  color: #333;
+}
+
+.form-select:focus {
+  outline: none;
+  border-color: #e48cb2;
+  box-shadow: 0 0 5px rgba(228, 140, 178, 0.5);
+}
+
+.form-button {
+  font-family: 'Times New Roman', Times, serif;
+  padding: 0.4rem 1rem;
+  border: none;
+  border-radius: 10px;
+  background-color: #f2c2d5;
+  color: #333;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.form-button:hover {
+  background-color: #e48cb2;
+}
+
 
 
 
