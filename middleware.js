@@ -54,6 +54,16 @@ export function protectSignoutPage(req, res, next) {
   next();
 }
 
+export function protectYearlyPage(req, res, next) {
+  if (req.method === "GET" && !req.session.user) {
+    console.log(
+      "[YEARLY PROTECTION]: User not logged in, redirecting to /login"
+    );
+    return res.redirect("/login");
+  }
+  next();
+}
+
 export function protectIncomePage(req, res, next) {
   if (req.method === "GET" && !req.session.user) {
     console.log(
