@@ -9,6 +9,7 @@ import {
   loginRedirect,
   registerRedirect,
   protectHomePage,
+  protectYearlyPage,
   protectSignoutPage,
   protectIncomePage,
   protectExpensePage,
@@ -72,6 +73,7 @@ app.use(logger);
 app.use("/login", loginRedirect);
 app.use("/register", registerRedirect);
 app.use("/home", protectHomePage);
+app.use("/yearlySummary", protectYearlyPage);
 app.use("/signout", protectSignoutPage);
 app.use("/income", protectIncomePage);
 app.use("/expense", protectExpensePage);
