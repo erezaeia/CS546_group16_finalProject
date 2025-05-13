@@ -59,6 +59,8 @@ Brief description of the project:
    Other dates will be left blank so empty pages with no data can also be seen.
    
 5. Start the development server:
+In order to use this application, because of the views, you will have to open the folder CS546_group16_finalProject in vsc (not inside another folder).
+Then run this command in the terminal. 
     ```bash
     npm start
     ```
