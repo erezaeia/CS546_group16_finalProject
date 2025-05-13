@@ -8,7 +8,7 @@ export function logger(req, res, next) {
   if (req.session && req.session.user) {
     authStatus = `Authenticated ${req.session.user.email}`;
   }
-  console.log(`[${timestamp}]: ${method} ${path} (${authStatus})`);
+  //console.log(`[${timestamp}]: ${method} ${path} (${authStatus})`);
   next();
 }
 
