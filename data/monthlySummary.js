@@ -190,7 +190,7 @@ const monthlySummaryFunctions = {
     const breakdownByCategory = await this.updateBreakdownByCategory(userId, month, year);
   
     const userCollection = await users();
-    const userDoc = await userCollection.findOne({ _id: userId });
+    const userDoc = await userCollection.findOne({ _id: new Object(userId) });
 
     const initialBalance = userDoc?.balance || 0;
 
