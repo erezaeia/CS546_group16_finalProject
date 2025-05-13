@@ -132,9 +132,11 @@ let exportedMethods = {
     const usersCol = await usersCollection.findOne({ _id: new ObjectId(id) });
     if (usersCol === null) throw "No user with that id";
 
-    const existingUser = await usersCollection.findOne({ email: email });
-    if (existingUser) {
-      throw `A user with the email '${email}' already exists.`;
+    if(usersCol.email !== email){
+      const existingUser = await usersCollection.findOne({email:email});
+      if(existingUser) {
+        throw `A user with the email already exists.`;
+      }
     }
 
     if (parseInt(age) < 13) {
