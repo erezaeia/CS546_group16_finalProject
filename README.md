@@ -66,7 +66,7 @@ Then run this command in the terminal.
     ```
 If you used the seed, use this login.
 
-   Email: phill@stevens.edu **CHANGE** 
+   Email: phill@stevens.edu 
 
    Password: Sectionb1*
 
