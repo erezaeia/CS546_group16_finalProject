@@ -144,7 +144,7 @@ const yearlyFunctions = {
         const yearlyCollection = await yearlySummary();
         const findYearSum = await yearlyCollection.findOne({userId: userId, year:year});
         if (!findYearSum) {
-            return await this.addYearlySummary(userId, year.toString());
+            await this.addYearlySummary(userId, year.toString());
         }
         await this.updateTotalIncome(userId, year.toString());
         await this.updateTotalFixedExpenses(userId, year.toString());
